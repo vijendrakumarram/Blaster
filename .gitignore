@@ -12,3 +12,5 @@ Saved
 *.suo
 *.xcodeproj
 *.xcworkspace
+# Ignore Unreal Engine Starter Content
+Content/StarterContent/
