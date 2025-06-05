@@ -4,6 +4,7 @@
 #include "Blaster/Weapon/Weapon.h"
 #include "Blaster/Character/BlasterCharacter.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "Components/SphereComponent.h"
 
 UCombatComponent::UCombatComponent()
 {
@@ -37,6 +38,7 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)
 	}
 
 	EquippedWeapon->SetOwner(Character);
+	EquippedWeapon->GetAreaSphere()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 }
 
