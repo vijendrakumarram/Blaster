@@ -2,12 +2,15 @@
 
 
 #include "Projectile.h"
+#include "Components/BoxComponent.h"
 
 // Sets default values
 AProjectile::AProjectile()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
+	SetRootComponent(CollisionBox);
 }
 
 void AProjectile::BeginPlay()
