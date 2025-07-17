@@ -24,6 +24,10 @@ protected:
 	UPROPERTY(EditAnywhere)
 	class UBoxComponent* CollisionBox;
 
+	UPROPERTY(EditAnywhere)
+	class UProjectileMovementComponent* ProjectileMovementComponent;
+
+
 public:	
 	// Called every frame
 
