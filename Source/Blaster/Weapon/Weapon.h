@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Casing.h"
 #include "Weapon.generated.h"
 
 UENUM(BlueprintType)
@@ -68,6 +69,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	class UAnimationAsset* FireAnimation;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ACasing> CasingClass;
 
 public:	
 	void SetWeaponState(EWeaponState State);
