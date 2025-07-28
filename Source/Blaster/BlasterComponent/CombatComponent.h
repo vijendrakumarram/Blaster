@@ -66,4 +66,18 @@ private:
 	float CrosshairInAirFactor;
 
 	FVector HitTarget;
+
+	float DefaultFOV;
+
+	UPROPERTY(EditAnywhere, Category = Comabat)
+	float ZoomedFOV = 30.f;
+
+	float CurrentFOV;
+
+	UPROPERTY(EditAnywhere, Category = Comabat)
+	float ZoomInterpSpeed = 20.f;
+
+	UFUNCTION()
+	void InterpFOV(float DeltaTime);
+
 };
