@@ -28,6 +28,8 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerSetAiming(bool bIsAiming);
 
+	void Fire();
+
 	UFUNCTION()
 	void OnRep_EquippedWeapon();
 
@@ -91,6 +93,11 @@ private:
 	float ZoomInterpSpeed = 20.f;
 
 	void InterpFOV(float DeltaTime);
+
+	FTimerHandle FireTimer;
+
+	void StartFireTimer();
+	void FireTimerFinished();
 
 public:	
 		
