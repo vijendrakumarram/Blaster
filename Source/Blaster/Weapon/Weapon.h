@@ -27,6 +27,9 @@ public:
 	AWeapon();
 	virtual void Tick(float DeltaTime) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeTimeProps) const override;
+	virtual void OnRep_Owner() override;
+	void SetHUDAmmo();
+	
 	void ShowPickupWidget(bool bShowWidget);
 	virtual void Fire(const FVector& HitTarget);
 
@@ -58,7 +61,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Combat)
 	bool bAutomatic = true;
-	bool bCanFire = true;
 
 protected:
 	virtual void BeginPlay() override;
@@ -103,7 +105,22 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ACasing> CasingClass;
 
+	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_Ammo)
+	int32 Ammo;
 
+	UFUNCTION()
+	void OnRep_Ammo();
+
+	void SpendRound();
+
+	UPROPERTY(EditAnywhere)
+	int32 MagCapacity;
+
+	UPROPERTY(EditAnywhere)
+	class ABlasterCharacter* BlasterOwnerCharacter;	
+	
+	UPROPERTY(EditAnywhere)
+	class ABlasterPlayerController* BlasterOwnerController;
 
 public:	
 	void SetWeaponState(EWeaponState State);
@@ -111,4 +128,5 @@ public:
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() { return WeaponMesh; }
 	FORCEINLINE float GetZoomedFOV() const { return ZoomedFOV; }
 	FORCEINLINE float GetZoomInterpSpeed() const { return ZoomInterpSpeed; }
+	bool IsEmpty();
 };

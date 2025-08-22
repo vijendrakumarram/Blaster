@@ -73,16 +73,16 @@ void UCombatComponent::FireButtonPressed(bool bPressed)
 
 void UCombatComponent::Fire()
 {
-	if (EquippedWeapon->bCanFire)
+	if (CanFire())
 	{
-		EquippedWeapon->bCanFire = false;
+		bCanFire = false;		
 		ServerFire(HitTarget);
 
 		if (EquippedWeapon)
 		{
 			CrosshairShootingFactor = .75f;
 		}
-		StartFireTimer();
+		StartFireTimer();	
 	}
 }
 
@@ -101,12 +101,18 @@ void UCombatComponent::StartFireTimer()
 void UCombatComponent::FireTimerFinished()
 {
 	if (EquippedWeapon == nullptr) return;
-
-	EquippedWeapon->bCanFire = true;
+	bCanFire = true;
 	if (bFireButtonPressed && EquippedWeapon->bAutomatic)
 	{
 		Fire();
 	}
+}
+
+bool UCombatComponent::CanFire()
+{
+	if (EquippedWeapon == nullptr) 	return false;
+
+	return !EquippedWeapon->IsEmpty() || !bCanFire;
 }
 
 void UCombatComponent::ServerFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
@@ -128,6 +134,11 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)
 {
 	if (Character == nullptr || WeaponToEquip == nullptr) return;
 
+	if (EquippedWeapon)
+	{
+		EquippedWeapon->Dropped();
+	}
+
 	EquippedWeapon = WeaponToEquip;
 	EquippedWeapon->SetWeaponState(EWeaponState::EWS_Equipped);
 	const USkeletalMeshSocket* HandSocket = Character->GetMesh()->GetSocketByName(FName("RightHandSocket"));
@@ -136,6 +147,7 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)
 		HandSocket->AttachActor(EquippedWeapon, Character->GetMesh());
 	}
 	EquippedWeapon->SetOwner(Character);
+	EquippedWeapon->SetHUDAmmo();
 	Character->GetCharacterMovement()->bOrientRotationToMovement = false;
 	Character->bUseControllerRotationYaw = true;
 }
