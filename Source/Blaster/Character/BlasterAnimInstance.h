@@ -74,5 +74,8 @@ private:
 	bool bRotateRootBone;	
 	
 	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
-	bool bElimmed;
+	bool bElimmed;	
+	
+	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	bool bUseFabrik;
 };

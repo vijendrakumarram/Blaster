@@ -247,7 +247,7 @@ void ABlasterCharacter::PlayReloadMontage()
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && ReloadMontage)
 	{
-		AnimInstance->Montage_Play(FireWeaponMontage);
+		AnimInstance->Montage_Play(ReloadMontage);
 		FName SectionName;
 
 		switch (Combat->EquippedWeapon->GetWeaponType())
@@ -626,4 +626,13 @@ FVector ABlasterCharacter::GetHitTarget() const
 {
 	if (Combat == nullptr) return FVector();
 	return Combat->HitTarget;
+}
+
+ECombatState ABlasterCharacter::GetCombatState() const
+{
+	if (Combat == nullptr)
+	{
+		return ECombatState::ETIP_MAX;
+	}
+	return Combat->CombatState;
 }
