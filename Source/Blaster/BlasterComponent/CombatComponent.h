@@ -55,6 +55,8 @@ protected:
 	
 	void HandleReload();
 
+	int32 AmountToReload();
+
 	UFUNCTION(BlueprintCallable)
 	void FinishReloading();
 
@@ -136,6 +138,8 @@ private:
 
 	UFUNCTION()
 	void OnRep_CombatState();
+
+	void UpdateAmmoValues();
 
 public:	
 		
