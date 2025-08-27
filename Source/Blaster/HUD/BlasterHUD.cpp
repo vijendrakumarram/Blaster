@@ -4,6 +4,7 @@
 #include "BlasterHUD.h"
 #include "GameFramework/Playercontroller.h"
 #include "CharacterOverlay.h"
+#include "Net/UnrealNetwork.h"
 
 void ABlasterHUD::BeginPlay()
 {
