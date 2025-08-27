@@ -31,7 +31,8 @@ public:
 	float LevelStartingTime = 0.f;
 
 protected:
-	virtual void BeginPlay();
+	virtual void BeginPlay() override;
+	virtual void OnMatchStateSet() override;
 
 private:
 	float CountdownTime = 0.f;
