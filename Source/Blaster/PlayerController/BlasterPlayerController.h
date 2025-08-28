@@ -31,6 +31,7 @@ public:
 	
 	void OnMatchStateSet(FName State);
 	void HandleMatchHasStarted();
+	void HandleCooldown();
 protected:
 	virtual void BeginPlay() override;
 	void SetHUDTime();
@@ -55,15 +56,19 @@ protected:
 	void ServerCheckMatchState();
 
 	UFUNCTION(Client, Reliable)
-	void ClientJoinMidgame(FName StateOfMatch, float Warmup, float Match, float StartingTime);
+	void ClientJoinMidgame(FName StateOfMatch, float Warmup, float Match, float Cooldown, float StartingTime);
 
 private:
 	UPROPERTY()
 	class ABlasterHUD* BlasterHUD;
+	
+	UPROPERTY()
+	class ABlasterGameMode* BlasterGameMode;
 
 	float LevelStartingTime = 0.f;
 	float MatchTime = 0.f;
 	float WarmupTime = 0.f;
+	float CooldownTime = 0.f;
 	uint32 CountdowInt = 0;
 
 	UPROPERTY(ReplicatedUsing = OnRep_MatchState)
