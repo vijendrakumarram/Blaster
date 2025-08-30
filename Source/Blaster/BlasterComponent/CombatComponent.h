@@ -26,6 +26,11 @@ public:
 
 	void Reload();
 
+	UFUNCTION(BlueprintCallable)
+	void FinishReloading();
+
+	void FireButtonPressed(bool bPressed);
+
 protected:
 	virtual void BeginPlay() override;
 	void SetAiming(bool bIsAiming);
@@ -37,8 +42,6 @@ protected:
 
 	UFUNCTION()
 	void OnRep_EquippedWeapon();
-
-	void FireButtonPressed(bool bPressed);
 
 	UFUNCTION(Server, Reliable)
 	void ServerFire(const FVector_NetQuantize& TraceHitTarget);
@@ -56,9 +59,6 @@ protected:
 	void HandleReload();
 
 	int32 AmountToReload();
-
-	UFUNCTION(BlueprintCallable)
-	void FinishReloading();
 
 private:
 	UPROPERTY()
