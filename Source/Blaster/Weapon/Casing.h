@@ -26,7 +26,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* CasingMesh;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
 	float ShellEjectionImpulse;
 
 	UPROPERTY(EditAnywhere)
