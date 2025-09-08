@@ -139,7 +139,10 @@ private:
 	int StartingSMGAmmo = 0;	
 	
 	UPROPERTY(EditAnywhere)
-	int StartingShotgunAmmo = 0;
+	int StartingShotgunAmmo = 0;	
+	
+	UPROPERTY(EditAnywhere)
+	int StartingSniperAmmo = 0;
 
 	void InitializeCarriedAmmo();
 
