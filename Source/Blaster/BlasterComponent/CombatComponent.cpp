@@ -82,8 +82,10 @@ void UCombatComponent::FireButtonPressed(bool bPressed)
 
 void UCombatComponent::ShotgunShellReload()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Shell - Verify"));
 	if (Character && Character->HasAuthority())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Shell - Insert"));
 		UpdateShotgunAmmoValues();
 	}
 }
@@ -132,11 +134,8 @@ void UCombatComponent::FireTimerFinished()
 
 bool UCombatComponent::CanFire()
 {
-	if (EquippedWeapon == nullptr) 	return false;
-
-	if (!EquippedWeapon->IsEmpty() && bCanFire && CombatState == ECombatState::ECS_Reloading &&
-		EquippedWeapon->GetWeaponType() == EWeaponType::EWT_Shotgun) return true;
-
+	if (EquippedWeapon == nullptr) return false;
+	if (!EquippedWeapon->IsEmpty() && bCanFire && CombatState == ECombatState::ECS_Reloading && EquippedWeapon->GetWeaponType() == EWeaponType::EWT_Shotgun) return true;
 	return !EquippedWeapon->IsEmpty() && bCanFire && CombatState == ECombatState::ECS_Unoccupied;
 }
 
@@ -147,12 +146,11 @@ void UCombatComponent::OnRep_CarriedAmmo()
 	{
 		Controller->SetHUDCarriedAmmo(CarriedAmmo);
 	}
-
-	bool bJumpToShotgunEnd = CombatState == ECombatState::ECS_Reloading &&
+	bool bJumpToShotgunEnd =
+		CombatState == ECombatState::ECS_Reloading &&
 		EquippedWeapon != nullptr &&
 		EquippedWeapon->GetWeaponType() == EWeaponType::EWT_Shotgun &&
 		CarriedAmmo == 0;
-
 	if (bJumpToShotgunEnd)
 	{
 		JumpToShotgunEnd();
@@ -289,6 +287,11 @@ void UCombatComponent::FinishReloading()
 	{
 		CombatState = ECombatState::ECS_Unoccupied;
 		UpdateAmmoValues();
+	}
+
+	if (bFireButtonPressed)
+	{
+		Fire();
 	}
 }
 
