@@ -67,7 +67,8 @@ protected:
 	void PlayHitReactMontage();
 	void PlayElimMontage();
 	void GrenadeButtonPressed();
-
+	void DropOrDestroyWeapon(AWeapon* Weapon);
+	void DropOrDestroyWeapons();
 
 	UFUNCTION()
 	void ReceiveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatorController, AActor* DamageCauser);
