@@ -53,6 +53,7 @@ protected:
 	void ServerSetAiming(bool bIsAiming);
 
 	void Fire();
+	void LocalFire(const FVector_NetQuantize& TraceHitTarget);
 
 	UFUNCTION()
 	void OnRep_EquippedWeapon();	
