@@ -795,6 +795,16 @@ void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 	}
 }
 
+bool ABlasterCharacter::IsLocallyReloading()
+{
+	if (Combat == nullptr)
+	{
+		return false;
+	}
+
+	return Combat->bLocallyReloading;
+}
+
 void ABlasterCharacter::OnRep_Shield(float LastShield)
 {
 	UpdateHUDShield();
