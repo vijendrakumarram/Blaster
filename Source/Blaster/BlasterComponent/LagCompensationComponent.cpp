@@ -19,21 +19,10 @@ void ULagCompensationComponent::BeginPlay()
 	ShowFramePackage(Package, FColor::Orange);
 }
 
-void ULagCompensationComponent::SaveFramePackage(FFramePackage& Package)
+void ULagCompensationComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	Character = Character == nullptr ? Cast<ABlasterCharacter>(GetOwner()) : Character;
-	if (Character)
-	{
-		Package.Time = GetWorld()->GetTimeSeconds();
-		for (auto& BoxPair : Character->HitCollisionBoxes)
-		{
-			FBoxInformation BoxInformation;
-			BoxInformation.Location = BoxPair.Value->GetComponentLocation();
-			BoxInformation.Rotation = BoxPair.Value->GetComponentRotation();
-			BoxInformation.BoxExtent = BoxPair.Value->GetScaledBoxExtent();
-			Package.HitBoxInfo.Add(BoxPair.Key, BoxInformation);
-		}
-	}
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	SaveFramePackage();
 }
 
 FFramePackage ULagCompensationComponent::InterpBetweenFrames(const FFramePackage& OlderFrame, const FFramePackage& YoungerFrame, float HitTime)
@@ -195,13 +184,76 @@ void ULagCompensationComponent::ShowFramePackage(const FFramePackage& Package, c
 
 FServerSideRewindResult ULagCompensationComponent::ServerSideRewind(ABlasterCharacter* HitCharacter, const FVector_NetQuantize& TraceStart, const FVector_NetQuantize& HitLocation, float HitTime)
 {
+	FFramePackage FrameToCheck = GetFrameToCheck(HitCharacter, HitTime);
+	return ConfirmHit(FrameToCheck, HitCharacter, TraceStart, HitLocation);
+}
+
+void ULagCompensationComponent::ServerScoreRequest_Implementation(ABlasterCharacter* HitCharacter, const FVector_NetQuantize& TraceStart, const FVector_NetQuantize& HitLocation, float HitTime, AWeapon* DamageCauser)
+{
+	FServerSideRewindResult Confirm = ServerSideRewind(HitCharacter, TraceStart, HitLocation, HitTime);
+
+	if (Character && HitCharacter && DamageCauser && Confirm.bHitConfirmed)
+	{
+		UGameplayStatics::ApplyDamage(
+			HitCharacter,
+			DamageCauser->GetDamage(),
+			Character->Controller,
+			DamageCauser,
+			UDamageType::StaticClass()
+		);
+	}
+}
+
+void ULagCompensationComponent::SaveFramePackage(FFramePackage& Package)
+{
+	Character = Character == nullptr ? Cast<ABlasterCharacter>(GetOwner()) : Character;
+	if (Character)
+	{
+		Package.Time = GetWorld()->GetTimeSeconds();
+		Package.Character = Character;
+		for (auto& BoxPair : Character->HitCollisionBoxes)
+		{
+			FBoxInformation BoxInformation;
+			BoxInformation.Location = BoxPair.Value->GetComponentLocation();
+			BoxInformation.Rotation = BoxPair.Value->GetComponentRotation();
+			BoxInformation.BoxExtent = BoxPair.Value->GetScaledBoxExtent();
+			Package.HitBoxInfo.Add(BoxPair.Key, BoxInformation);
+		}
+	}
+}
+
+void ULagCompensationComponent::SaveFramePackage()
+{
+	if (FrameHistory.Num() <= 1)
+	{
+		FFramePackage ThisFrame;
+		SaveFramePackage(ThisFrame);
+		FrameHistory.AddHead(ThisFrame);
+	}
+	else
+	{
+		float HistoryLength = FrameHistory.GetHead()->GetValue().Time - FrameHistory.GetTail()->GetValue().Time;
+		while (HistoryLength > MaxRecordTime)
+		{
+			FrameHistory.RemoveNode(FrameHistory.GetTail());
+			HistoryLength = FrameHistory.GetHead()->GetValue().Time - FrameHistory.GetTail()->GetValue().Time;
+		}
+		FFramePackage ThisFrame;
+		SaveFramePackage(ThisFrame);
+		FrameHistory.AddHead(ThisFrame);
+		//ShowFramePackage(ThisFrame, FColor::Red);
+	}
+}
+
+FFramePackage ULagCompensationComponent::GetFrameToCheck(ABlasterCharacter* HitCharacter, float HitTime)
+{
 	bool bReturn =
 		HitCharacter == nullptr ||
 		HitCharacter->GetLagCompensation() == nullptr ||
 		HitCharacter->GetLagCompensation()->FrameHistory.GetHead() == nullptr ||
 		HitCharacter->GetLagCompensation()->FrameHistory.GetTail() == nullptr;
 
-	if (bReturn) return FServerSideRewindResult();
+	if (bReturn) return FFramePackage();
 
 	// Frame package that we check to verify a hit
 	FFramePackage FrameToCheck;
@@ -213,7 +265,7 @@ FServerSideRewindResult ULagCompensationComponent::ServerSideRewind(ABlasterChar
 	if (OldestHistoryTime > HitTime)
 	{
 		// too far back - too laggy to do SSR
-		return FServerSideRewindResult();
+		return FFramePackage();
 	}
 	if (OldestHistoryTime == HitTime)
 	{
@@ -249,52 +301,22 @@ FServerSideRewindResult ULagCompensationComponent::ServerSideRewind(ABlasterChar
 		FrameToCheck = InterpBetweenFrames(Older->GetValue(), Younger->GetValue(), HitTime);
 	}
 
-	return ConfirmHit(FrameToCheck, HitCharacter, TraceStart, HitLocation);
+	return FFramePackage();
 }
 
-void ULagCompensationComponent::ServerScoreRequest_Implementation(ABlasterCharacter* HitCharacter, const FVector_NetQuantize& TraceStart, const FVector_NetQuantize& HitLocation, float HitTime, AWeapon* DamageCauser)
+FShotgunServerSideRewindResult ULagCompensationComponent::ShotgunServerSideRewind(const TArray<ABlasterCharacter*>& HitCharacters, const FVector_NetQuantize& TraceStart, const TArray<FVector_NetQuantize>& HitLocations, float HitTime)
 {
-	FServerSideRewindResult Confirm = ServerSideRewind(HitCharacter, TraceStart, HitLocation, HitTime);
-
-	if (Character && HitCharacter && DamageCauser && Confirm.bHitConfirmed)
+	TArray<FFramePackage> FramesToCheck;
+	for (ABlasterCharacter* HitCharacter : HitCharacters)
 	{
-		UGameplayStatics::ApplyDamage(
-			HitCharacter,
-			DamageCauser->GetDamage(),
-			Character->Controller,
-			DamageCauser,
-			UDamageType::StaticClass()
-		);
+		FramesToCheck.Add(GetFrameToCheck(HitCharacter, HitTime));
 	}
+
+	return FShotgunServerSideRewindResult();
 }
 
-void ULagCompensationComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+FShotgunServerSideRewindResult ULagCompensationComponent::ShotgunConfirmHit(const TArray<FFramePackage>& FramePackages, const FVector_NetQuantize& TraceStart, const TArray<FVector_NetQuantize>& HitLocations)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
-	SaveFramePackage();
-}
-
-void ULagCompensationComponent::SaveFramePackage()
-{
-	if (FrameHistory.Num() <= 1)
-	{
-		FFramePackage ThisFrame;
-		SaveFramePackage(ThisFrame);
-		FrameHistory.AddHead(ThisFrame);
-	}
-	else
-	{
-		float HistoryLength = FrameHistory.GetHead()->GetValue().Time - FrameHistory.GetTail()->GetValue().Time;
-		while (HistoryLength > MaxRecordTime)
-		{
-			FrameHistory.RemoveNode(FrameHistory.GetTail());
-			HistoryLength = FrameHistory.GetHead()->GetValue().Time - FrameHistory.GetTail()->GetValue().Time;
-		}
-		FFramePackage ThisFrame;
-		SaveFramePackage(ThisFrame);
-		FrameHistory.AddHead(ThisFrame);
-		//ShowFramePackage(ThisFrame, FColor::Red);
-	}
+	return FShotgunServerSideRewindResult();
 }
 
