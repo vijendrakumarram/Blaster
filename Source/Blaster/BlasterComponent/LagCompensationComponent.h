@@ -65,10 +65,15 @@ class BLASTER_API ULagCompensationComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
+	
 	ULagCompensationComponent();
+	
 	friend class ABlasterCharacter;
+	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;		
+	
 	void ShowFramePackage(const FFramePackage& Package, const FColor& Color);
+	
 	FServerSideRewindResult ServerSideRewind(
 		class ABlasterCharacter* HitCharacter,
 		const FVector_NetQuantize& TraceStart,
@@ -83,6 +88,12 @@ public:
 		float HitTime,
 		class AWeapon* DamageCauser
 	);
+
+	UFUNCTION(Server, Reliable)
+	void ShotgunServerScoreRequest(const TArray<ABlasterCharacter*>& HitCharacters,
+		const FVector_NetQuantize& TraceStart,
+		const TArray<FVector_NetQuantize>& HitLocations,
+		float HitTime);
 
 protected:
 	virtual void BeginPlay() override;
