@@ -27,6 +27,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	float InitialSpeed = 15000;
 
+	UPROPERTY(EditAnywhere)
+	float Damage = 20.f;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -37,9 +40,6 @@ protected:
 
 	UFUNCTION()
 	virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
-	UPROPERTY(EditAnywhere)
-	float Damage = 20.f;
 
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem* ImpactParticle;
