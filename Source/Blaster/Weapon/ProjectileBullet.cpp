@@ -36,6 +36,7 @@ void AProjectileBullet::BeginPlay()
 {
 	Super::BeginPlay();
 
+	/*
 	FPredictProjectilePathParams PathParams;
 	PathParams.bTraceWithChannel = true;
 	PathParams.bTraceWithCollision = true;
@@ -51,7 +52,7 @@ void AProjectileBullet::BeginPlay()
 
 	FPredictProjectilePathResult PathResult;
 
-	UGameplayStatics::PredictProjectilePath(this, PathParams, PathResult);
+	UGameplayStatics::PredictProjectilePath(this, PathParams, PathResult);*/
 }
 
 void AProjectileBullet::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
