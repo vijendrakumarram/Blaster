@@ -16,6 +16,7 @@
 #include "Blaster/PlayerState/BlasterPlayerState.h"
 //#include "Blaster/Weapon/Weapon.h"
 #include "Components/Image.h"
+#include "Blaster/HUD/ReturnToMainMenu.h"
 
 void ABlasterPlayerController::BeginPlay()
 {
@@ -85,6 +86,31 @@ void ABlasterPlayerController::CheckPing(float DeltaTime)
 		if (PingAnimationRunningTime > HighPingDuration)
 		{
 			StopHighPingWarning();
+		}
+	}
+}
+
+void ABlasterPlayerController::ShowReturnToMainMenu()
+{
+	if (ReturnToMainMenuWidget == nullptr) return;
+
+	if (ReturnToMainMenu == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ui creating>>>>>>>>>>>>>>>>"));
+		ReturnToMainMenu = CreateWidget<UReturnToMainMenu>(this, ReturnToMainMenuWidget);
+	}
+
+	if (ReturnToMainMenu)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Return to main menu ui created>>>>>>>>>>>>>>>>"));
+		bReturnToMainMenuOpen = !bReturnToMainMenuOpen;
+		if (bReturnToMainMenuOpen)
+		{
+			ReturnToMainMenu->MenuSetup();
+		}
+		else
+		{
+			ReturnToMainMenu->MenuTearDown();
 		}
 	}
 }
@@ -559,4 +585,13 @@ void ABlasterPlayerController::PollInit()
 			}
 		}
 	}
+}
+
+void ABlasterPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+	if (InputComponent == nullptr) return;
+
+	InputComponent->BindAction("Quit", IE_Pressed, this, &ABlasterPlayerController::ShowReturnToMainMenu);
+
 }

@@ -46,6 +46,8 @@ protected:
 	void SetHUDTime();
 	void PollInit();
 
+	virtual void SetupInputComponent() override;
+
 	UFUNCTION(Server, Reliable)
 	void ServerRequestServerTime(float TimeOfClientRequest);
 
@@ -71,12 +73,26 @@ protected:
 	void StopHighPingWarning();
 	void CheckPing(float DeltaTime);
 
+	void ShowReturnToMainMenu();
+
 private:
 	UPROPERTY()
 	class ABlasterHUD* BlasterHUD;
 	
 	UPROPERTY()
 	class ABlasterGameMode* BlasterGameMode;
+
+	/**
+	* Return to main menu
+	*/
+
+	UPROPERTY(EditAnywhere, Category = HUD)
+	TSubclassOf<class UUserWidget> ReturnToMainMenuWidget;
+
+	UPROPERTY()
+	class UReturnToMainMenu* ReturnToMainMenu;
+
+	bool bReturnToMainMenuOpen = false;
 
 	float LevelStartingTime = 0.f;
 	float MatchTime = 0.f;
