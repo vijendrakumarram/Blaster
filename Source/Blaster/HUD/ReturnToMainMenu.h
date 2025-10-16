@@ -7,13 +7,12 @@
 #include "ReturnToMainMenu.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class BLASTER_API UReturnToMainMenu : public UUserWidget
 {
 	GENERATED_BODY()
-	
 public:
 	void MenuSetup();
 	void MenuTearDown();
@@ -23,7 +22,7 @@ protected:
 
 	UFUNCTION()
 	void OnDestroySession(bool bWasSuccessful);
-	
+
 	UFUNCTION()
 	void OnPlayerLeftGame();
 
@@ -33,7 +32,6 @@ private:
 
 	UFUNCTION()
 	void ReturnButtonClicked();
-
 
 	UPROPERTY()
 	class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;

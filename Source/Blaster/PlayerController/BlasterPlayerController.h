@@ -9,13 +9,12 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHighPingDelegate, bool, bPingTooHigh);
 
 /**
- * 
+ *
  */
 UCLASS()
 class BLASTER_API ABlasterPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-
 public:
 	void SetHUDHealth(float Health, float MaxHealth);
 	void SetHUDShield(float Shield, float MaxShield);
@@ -29,10 +28,9 @@ public:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	virtual float GetServerTime(); // Synced with server world clock
-	
 	virtual void ReceivedPlayer() override; // Sync with server clock as soon as possible
-	
 	void OnMatchStateSet(FName State);
 	void HandleMatchHasStarted();
 	void HandleCooldown();
@@ -40,27 +38,29 @@ public:
 	float SingleTripTime = 0.f;
 
 	FHighPingDelegate HighPingDelegate;
-
 protected:
 	virtual void BeginPlay() override;
 	void SetHUDTime();
 	void PollInit();
-
 	virtual void SetupInputComponent() override;
+	/**
+	* Sync time between client and server
+	*/
 
+	// Requests the current server time, passing in the client's time when the request was sent
 	UFUNCTION(Server, Reliable)
 	void ServerRequestServerTime(float TimeOfClientRequest);
 
 	// Reports the current server time to the client in response to ServerRequestServerTime
 	UFUNCTION(Client, Reliable)
 	void ClientReportServerTime(float TimeOfClientRequest, float TimeServerReceivedClientRequest);
-	float ClientServerDelta = 0.f;
-	
+
+	float ClientServerDelta = 0.f; // difference between client and server time
+
 	UPROPERTY(EditAnywhere, Category = Time)
 	float TimeSyncFrequency = 5.f;
 
-	float TimeSyncRunningTime = 5.f;
-
+	float TimeSyncRunningTime = 0.f;
 	void CheckTimeSync(float DeltaTime);
 
 	UFUNCTION(Server, Reliable)
@@ -78,11 +78,8 @@ protected:
 private:
 	UPROPERTY()
 	class ABlasterHUD* BlasterHUD;
-	
-	UPROPERTY()
-	class ABlasterGameMode* BlasterGameMode;
 
-	/**
+	/** 
 	* Return to main menu
 	*/
 
@@ -98,7 +95,7 @@ private:
 	float MatchTime = 0.f;
 	float WarmupTime = 0.f;
 	float CooldownTime = 0.f;
-	uint32 CountdowInt = 0;
+	uint32 CountdownInt = 0;
 
 	UPROPERTY(ReplicatedUsing = OnRep_MatchState)
 	FName MatchState;
@@ -108,7 +105,6 @@ private:
 
 	UPROPERTY()
 	class UCharacterOverlay* CharacterOverlay;
-	bool bInitializeCharacterOverlay = false;
 
 	float HUDHealth;
 	bool bInitializeHealth = false;
@@ -122,10 +118,8 @@ private:
 	float HUDShield;
 	bool bInitializeShield = false;
 	float HUDMaxShield;
-
 	float HUDCarriedAmmo;
 	bool bInitializeCarriedAmmo = false;
-
 	float HUDWeaponAmmo;
 	bool bInitializeWeaponAmmo = false;
 
@@ -137,12 +131,11 @@ private:
 	float PingAnimationRunningTime = 0.f;
 
 	UPROPERTY(EditAnywhere)
-	float CheckPingFrequency = 20.f;	
-	
+	float CheckPingFrequency = 20.f;
+
 	UFUNCTION(Server, Reliable)
 	void ServerReportPingStatus(bool bHighPing);
 
 	UPROPERTY(EditAnywhere)
 	float HighPingThreshold = 50.f;
-
 };

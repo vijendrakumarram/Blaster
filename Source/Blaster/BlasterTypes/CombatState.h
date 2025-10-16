@@ -8,5 +8,5 @@ enum class ECombatState : uint8
 	ECS_ThrowingGrenade UMETA(DisplayName = "Throwing Grenade"),
 	ECS_SwappingWeapons UMETA(DisplayName = "Swapping Weapons"),
 
-	ETIP_MAX UMETA(DisplayName = "DefaultMAX")
+	ECS_MAX UMETA(DisplayName = "DefaultMAX")
 };

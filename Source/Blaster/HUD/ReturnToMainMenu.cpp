@@ -15,11 +15,10 @@ void UReturnToMainMenu::MenuSetup()
 	bIsFocusable = true;
 
 	UWorld* World = GetWorld();
-
 	if (World)
 	{
 		PlayerController = PlayerController == nullptr ? World->GetFirstPlayerController() : PlayerController;
-		if (PlayerController) 
+		if (PlayerController)
 		{
 			FInputModeGameAndUI InputModeData;
 			InputModeData.SetWidgetToFocus(TakeWidget());
@@ -27,18 +26,15 @@ void UReturnToMainMenu::MenuSetup()
 			PlayerController->SetShowMouseCursor(true);
 		}
 	}
-
 	if (ReturnButton && !ReturnButton->OnClicked.IsBound())
 	{
 		ReturnButton->OnClicked.AddDynamic(this, &UReturnToMainMenu::ReturnButtonClicked);
 	}
-
 	UGameInstance* GameInstance = GetGameInstance();
-
 	if (GameInstance)
 	{
 		MultiplayerSessionsSubsystem = GameInstance->GetSubsystem<UMultiplayerSessionsSubsystem>();
-		if (MultiplayerSessionsSubsystem && !MultiplayerSessionsSubsystem->MultiplayerOnDestroySessionComplete.IsBound())
+		if (MultiplayerSessionsSubsystem)
 		{
 			MultiplayerSessionsSubsystem->MultiplayerOnDestroySessionComplete.AddDynamic(this, &UReturnToMainMenu::OnDestroySession);
 		}
@@ -55,32 +51,6 @@ bool UReturnToMainMenu::Initialize()
 	return true;
 }
 
-void UReturnToMainMenu::MenuTearDown()
-{
-	RemoveFromParent();
-
-	UWorld* World = GetWorld();
-	if (World)
-	{
-		PlayerController = PlayerController == nullptr ? World->GetFirstPlayerController() : PlayerController;
-		if (PlayerController)
-		{
-			FInputModeGameOnly InputModeData;
-			PlayerController->SetInputMode(InputModeData);
-			PlayerController->SetShowMouseCursor(false);
-		}
-	}
-
-	if (ReturnButton && ReturnButton->OnClicked.IsBound())
-	{
-		ReturnButton->OnClicked.RemoveDynamic(this, &UReturnToMainMenu::ReturnButtonClicked);
-	}
-	if (MultiplayerSessionsSubsystem && MultiplayerSessionsSubsystem->MultiplayerOnDestroySessionComplete.IsBound())
-	{
-		MultiplayerSessionsSubsystem->MultiplayerOnDestroySessionComplete.RemoveDynamic(this, &UReturnToMainMenu::OnDestroySession);
-	}
-}
-
 void UReturnToMainMenu::OnDestroySession(bool bWasSuccessful)
 {
 	if (!bWasSuccessful)
@@ -90,7 +60,6 @@ void UReturnToMainMenu::OnDestroySession(bool bWasSuccessful)
 	}
 
 	UWorld* World = GetWorld();
-
 	if (World)
 	{
 		AGameModeBase* GameMode = World->GetAuthGameMode<AGameModeBase>();
@@ -107,13 +76,36 @@ void UReturnToMainMenu::OnDestroySession(bool bWasSuccessful)
 			}
 		}
 	}
+}
 
+void UReturnToMainMenu::MenuTearDown()
+{
+	RemoveFromParent();
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		PlayerController = PlayerController == nullptr ? World->GetFirstPlayerController() : PlayerController;
+		if (PlayerController)
+		{
+			FInputModeGameOnly InputModeData;
+			PlayerController->SetInputMode(InputModeData);
+			PlayerController->SetShowMouseCursor(false);
+		}
+	}
+	if (ReturnButton && ReturnButton->OnClicked.IsBound())
+	{
+		ReturnButton->OnClicked.RemoveDynamic(this, &UReturnToMainMenu::ReturnButtonClicked);
+	}
+	if (MultiplayerSessionsSubsystem && MultiplayerSessionsSubsystem->MultiplayerOnDestroySessionComplete.IsBound())
+	{
+		MultiplayerSessionsSubsystem->MultiplayerOnDestroySessionComplete.RemoveDynamic(this, &UReturnToMainMenu::OnDestroySession);
+	}
 }
 
 void UReturnToMainMenu::ReturnButtonClicked()
 {
 	ReturnButton->SetIsEnabled(false);
-	
+
 	UWorld* World = GetWorld();
 	if (World)
 	{
@@ -132,14 +124,16 @@ void UReturnToMainMenu::ReturnButtonClicked()
 			}
 		}
 	}
+
+
 }
 
 void UReturnToMainMenu::OnPlayerLeftGame()
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnPlayerLeftGame()"))
-	if (MultiplayerSessionsSubsystem)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("MultiplayerSessionsSubsystem valid"))
-		MultiplayerSessionsSubsystem->DestroySession();
-	}
+		if (MultiplayerSessionsSubsystem)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("MultiplayerSessionsSubsystem valid"))
+				MultiplayerSessionsSubsystem->DestroySession();
+		}
 }

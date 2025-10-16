@@ -6,7 +6,6 @@
 #define CUSTOM_DEPTH_BLUE 251
 #define CUSTOM_DEPTH_TAN 252
 
-
 UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {

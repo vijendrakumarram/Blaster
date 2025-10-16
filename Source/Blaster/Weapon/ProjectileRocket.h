@@ -16,10 +16,8 @@ class BLASTER_API AProjectileRocket : public AProjectile
 public:
 	AProjectileRocket();
 	virtual void Destroyed() override;
-
 protected:
 	virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) override;
-	
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
@@ -27,7 +25,7 @@ protected:
 
 	UPROPERTY()
 	UAudioComponent* ProjectileLoopComponent;
-	
+
 	UPROPERTY(EditAnywhere)
 	USoundAttenuation* LoopingSoundAttenuation;
 

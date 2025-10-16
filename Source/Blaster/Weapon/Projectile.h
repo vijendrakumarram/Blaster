@@ -12,14 +12,14 @@ class BLASTER_API AProjectile : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AProjectile();
 	virtual void Tick(float DeltaTime) override;
 	virtual void Destroyed() override;
 
-	/**
+	/** 
 	* Used with server-side rewind
 	*/
+
 	bool bUseServerSideRewind = false;
 	FVector_NetQuantize TraceStart;
 	FVector_NetQuantize100 InitialVelocity;
@@ -27,11 +27,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	float InitialSpeed = 15000;
 
-	UPROPERTY(EditAnywhere)
 	float Damage = 20.f;
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	void StartDestroyTimer();
 	void DestroyTimerFinished();
@@ -42,7 +40,7 @@ protected:
 	virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	UPROPERTY(EditAnywhere)
-	class UParticleSystem* ImpactParticle;
+	class UParticleSystem* ImpactParticles;
 
 	UPROPERTY(EditAnywhere)
 	class USoundCue* ImpactSound;
@@ -50,14 +48,14 @@ protected:
 	UPROPERTY(EditAnywhere)
 	class UBoxComponent* CollisionBox;
 
-	UPROPERTY(VisibleAnywhere)
-	class UProjectileMovementComponent* ProjectileMovementComponent;
-
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* TrailSystem;
 
 	UPROPERTY()
 	class UNiagaraComponent* TrailSystemComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	class UProjectileMovementComponent* ProjectileMovementComponent;
 
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* ProjectileMesh;
@@ -67,11 +65,12 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	float DamageOuterRadius = 500.f;
+
 private:
 
 	UPROPERTY(EditAnywhere)
-	class UParticleSystem* Tracer;	
-	
+	UParticleSystem* Tracer;
+
 	UPROPERTY()
 	class UParticleSystemComponent* TracerComponent;
 
@@ -79,8 +78,5 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float DestroyTime = 3.f;
-
 public:	
-	// Called every frame
-
 };

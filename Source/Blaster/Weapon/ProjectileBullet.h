@@ -13,7 +13,6 @@ UCLASS()
 class BLASTER_API AProjectileBullet : public AProjectile
 {
 	GENERATED_BODY()
-	
 public:
 	AProjectileBullet();
 

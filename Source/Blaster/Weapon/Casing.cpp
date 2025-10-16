@@ -5,19 +5,21 @@
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 
+// Sets default values
 ACasing::ACasing()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
 	CasingMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CasingMesh"));
 	SetRootComponent(CasingMesh);
-
 	CasingMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	CasingMesh->SetSimulatePhysics(true);
 	CasingMesh->SetEnableGravity(true);
 	CasingMesh->SetNotifyRigidBodyCollision(true);
 	ShellEjectionImpulse = 10.f;
 }
+
+
 
 void ACasing::BeginPlay()
 {
@@ -35,5 +37,4 @@ void ACasing::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitive
 	}
 	Destroy();
 }
-
 

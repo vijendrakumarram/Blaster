@@ -8,30 +8,22 @@
 
 namespace MatchState
 {
-	extern BLASTER_API const FName Cooldown; // Match duration has been reached. Display winner and begin cooldown timer.			
+	extern BLASTER_API const FName Cooldown; // Match duration has been reached. Display winner and begin cooldown timer.
 }
 
 /**
- * 
+ *
  */
 UCLASS()
 class BLASTER_API ABlasterGameMode : public AGameMode
 {
 	GENERATED_BODY()
-	
 public:
 	ABlasterGameMode();
-	
 	virtual void Tick(float DeltaTime) override;
-	
-	virtual void PlayerEliminated(class ABlasterCharacter* ElimmedCharacter, 
-		                          class ABlasterPlayerController* VictimController,
-								        ABlasterPlayerController* AttackerController);
-	
-	virtual void RequestRespawn(class ACharacter* ElimmedCharacter, class AController* ElimmedController);
-
+	virtual void PlayerEliminated(class ABlasterCharacter* ElimmedCharacter, class ABlasterPlayerController* VictimController, ABlasterPlayerController* AttackerController);
+	virtual void RequestRespawn(ACharacter* ElimmedCharacter, AController* ElimmedController);
 	void PlayerLeftGame(class ABlasterPlayerState* PlayerLeaving);
-
 	UPROPERTY(EditDefaultsOnly)
 	float WarmupTime = 10.f;
 
@@ -49,8 +41,4 @@ protected:
 
 private:
 	float CountdownTime = 0.f;
-
-public:
-	FORCEINLINE float GetCountdownTime() const { return CountdownTime; }
-
 };

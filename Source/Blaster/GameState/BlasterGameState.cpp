@@ -8,10 +8,11 @@
 void ABlasterGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
 	DOREPLIFETIME(ABlasterGameState, TopScoringPlayers);
 }
 
-void ABlasterGameState::UpdateTopScore(ABlasterPlayerState* ScoringPlayer)
+void ABlasterGameState::UpdateTopScore(class ABlasterPlayerState* ScoringPlayer)
 {
 	if (TopScoringPlayers.Num() == 0)
 	{

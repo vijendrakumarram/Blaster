@@ -23,22 +23,20 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void PostInitializeComponents() override;
-	
+
 	/**
 	* Play montages
-	*/	
+	*/
 	void PlayFireMontage(bool bAiming);
 	void PlayReloadMontage();
+	void PlayElimMontage();
 	void PlayThrowGrenadeMontage();
 	void PlaySwapMontage();
-	
+
 	virtual void OnRep_ReplicatedMovement() override;
-
 	void Elim(bool bPlayerLeftGame);
-
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastElim(bool bPlayerLeftGame);
-
 	virtual void Destroyed() override;
 
 	UPROPERTY(Replicated)
@@ -51,17 +49,17 @@ public:
 	void UpdateHUDShield();
 	void UpdateHUDAmmo();
 
-	void SpawnDefaultWeapon();
+	void SpawDefaultWeapon();
 
 	UPROPERTY()
 	TMap<FName, class UBoxComponent*> HitCollisionBoxes;
+
+	bool bFinishedSwapping = false;
 
 	UFUNCTION(Server, Reliable)
 	void ServerLeaveGame();
 
 	FOnLeftGame OnLeftGame;
-
-	bool bFinishedSwapping = false;
 
 protected:
 	virtual void BeginPlay() override;
@@ -82,22 +80,19 @@ protected:
 	void FireButtonPressed();
 	void FireButtonReleased();
 	void PlayHitReactMontage();
-	void PlayElimMontage();
 	void GrenadeButtonPressed();
 	void DropOrDestroyWeapon(AWeapon* Weapon);
 	void DropOrDestroyWeapons();
 
 	UFUNCTION()
-	void ReceiveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatorController, AActor* DamageCauser);
-	
-
+	void ReceiveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser);
+	// Poll for any relelvant classes and initialize our HUD
 	void PollInit();
-
 	void RotateInPlace(float DeltaTime);
 
 	/**
-* Hit boxes used for server-side rewind
-*/
+	* Hit boxes used for server-side rewind
+	*/
 
 	UPROPERTY(EditAnywhere)
 	class UBoxComponent* head;
@@ -173,10 +168,9 @@ private:
 	* Blaster components
 	*/
 
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadonly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UCombatComponent* Combat;
-	
+
 	UPROPERTY(VisibleAnywhere)
 	class UBuffComponent* Buff;
 
@@ -194,21 +188,25 @@ private:
 	ETurningInPlace TurningInPlace;
 	void TurnInPlace(float DeltaTime);
 
+	/**
+	* Animation montages
+	*/
+
 	UPROPERTY(EditAnywhere, Category = Combat)
 	class UAnimMontage* FireWeaponMontage;
 
 	UPROPERTY(EditAnywhere, Category = Combat)
-	class UAnimMontage* ReloadMontage;
+	UAnimMontage* ReloadMontage;
 
 	UPROPERTY(EditAnywhere, Category = Combat)
-	UAnimMontage* HitReactMontage;	
-	
+	UAnimMontage* HitReactMontage;
+
 	UPROPERTY(EditAnywhere, Category = Combat)
 	UAnimMontage* ElimMontage;
 
 	UPROPERTY(EditAnywhere, Category = Combat)
-	UAnimMontage* ThrowGrenadeMontage;	
-	
+	UAnimMontage* ThrowGrenadeMontage;
+
 	UPROPERTY(EditAnywhere, Category = Combat)
 	UAnimMontage* SwapMontage;
 
@@ -225,10 +223,14 @@ private:
 	float TimeSinceLastMovementReplication;
 	float CalculateSpeed();
 
+	/**
+	* Player health
+	*/
+
 	UPROPERTY(EditAnywhere, Category = "Player Stats")
 	float MaxHealth = 100.f;
-	
-	UPROPERTY(ReplicatedUsing = OnRep_Health, VisibleAnywhere,Category = "Player Stats")
+
+	UPROPERTY(ReplicatedUsing = OnRep_Health, VisibleAnywhere, Category = "Player Stats")
 	float Health = 100.f;
 
 	UFUNCTION()
@@ -253,7 +255,7 @@ private:
 	bool bElimmed = false;
 
 	FTimerHandle ElimTimer;
-	
+
 	UPROPERTY(EditDefaultsOnly)
 	float ElimDelay = 3.f;
 
@@ -261,23 +263,32 @@ private:
 
 	bool bLeftGame = false;
 
+	/**
+	* Dissolve effect
+	*/
+
 	UPROPERTY(VisibleAnywhere)
 	UTimelineComponent* DissolveTimeline;
 	FOnTimelineFloat DissolveTrack;
 
 	UPROPERTY(EditAnywhere)
 	UCurveFloat* DissolveCurve;
-	
+
 	UFUNCTION()
 	void UpdateDissolveMaterial(float DissolveValue);
-
 	void StartDissolve();
 
+	// Dynamic instance that we can change at runtime
 	UPROPERTY(VisibleAnywhere, Category = Elim)
 	UMaterialInstanceDynamic* DynamicDissolveMaterialInstance;
 
+	// Material instance set on the Blueprint, used with the dynamic material instance
 	UPROPERTY(EditAnywhere, Category = Elim)
 	UMaterialInstance* DissolveMaterialInstance;
+
+	/**
+	* Elim bot
+	*/
 
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* ElimBotEffect;
@@ -291,6 +302,10 @@ private:
 	UPROPERTY()
 	class ABlasterPlayerState* BlasterPlayerState;
 
+	/**
+	* Grenade
+	*/
+
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* AttachedGrenade;
 
@@ -301,7 +316,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AWeapon> DefaultWeaponClass;
 
-public:	
+public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
 	bool IsWeaponEquipped();
 	bool IsAiming();
@@ -319,7 +334,6 @@ public:
 	FORCEINLINE float GetShield() const { return Shield; }
 	FORCEINLINE void SetShield(float Amount) { Shield = Amount; }
 	FORCEINLINE float GetMaxShield() const { return MaxShield; }
-
 	ECombatState GetCombatState() const;
 	FORCEINLINE UCombatComponent* GetCombat() const { return Combat; }
 	FORCEINLINE bool GetDisableGameplay() const { return bDisableGameplay; }
