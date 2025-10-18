@@ -57,9 +57,15 @@ public:
 	bool bFinishedSwapping = false;
 
 	UFUNCTION(Server, Reliable)
-	void ServerLeaveGame();
+	void ServerLeaveGame();		
 
 	FOnLeftGame OnLeftGame;
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastGainedTheLead();
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastLostTheLead();
 
 protected:
 	virtual void BeginPlay() override;
@@ -301,6 +307,11 @@ private:
 
 	UPROPERTY()
 	class ABlasterPlayerState* BlasterPlayerState;
+
+	UPROPERTY(EditAnywhere)
+	class UNiagaraSystem* CrownSystem;	
+	
+	class UNiagaraComponent* CrownComponent;
 
 	/**
 	* Grenade
