@@ -13,14 +13,8 @@ AFlag::AFlag()
 	SetRootComponent(FlagMesh);
 	GetAreaSphere()->SetupAttachment(FlagMesh);
 	GetPickupWidget()->SetupAttachment(FlagMesh);
-
 	FlagMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	FlagMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-}
-
-void AFlag::BeginPlay()
-{
-	InitialTransform = GetActorTransform();
 }
 
 void AFlag::Dropped()
@@ -58,10 +52,11 @@ void AFlag::ResetFlag()
 	SetActorTransform(InitialTransform);
 }
 
-void AFlag::OnEquipped() 
+void AFlag::OnEquipped()
 {
 	ShowPickupWidget(false);
 	GetAreaSphere()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	FlagMesh->SetSimulatePhysics(false);
 	FlagMesh->SetEnableGravity(false);
 	FlagMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -85,4 +80,10 @@ void AFlag::OnDropped()
 	FlagMesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_BLUE);
 	FlagMesh->MarkRenderStateDirty();
 	EnableCustomDepth(true);
+}
+
+void AFlag::BeginPlay()
+{
+	Super::BeginPlay();
+	InitialTransform = GetActorTransform();
 }

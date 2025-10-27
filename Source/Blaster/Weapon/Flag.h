@@ -27,7 +27,6 @@ private:
 	UStaticMeshComponent* FlagMesh;
 
 	FTransform InitialTransform;
-
 public:
 	FORCEINLINE FTransform GetInitialTransform() const { return InitialTransform; }
 };

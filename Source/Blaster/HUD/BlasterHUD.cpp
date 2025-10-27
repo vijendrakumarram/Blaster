@@ -30,29 +30,28 @@ void ABlasterHUD::AddElimAnnouncement(FString Attacker, FString Victim)
 			{
 				if (Msg && Msg->AnnouncementBox)
 				{
-					UCanvasPanelSlot* CanvasSlot = 
-						UWidgetLayoutLibrary::SlotAsCanvasSlot(Msg->AnnouncementBox);
-					
+					UCanvasPanelSlot* CanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(Msg->AnnouncementBox);
 					if (CanvasSlot)
 					{
 						FVector2D Position = CanvasSlot->GetPosition();
-						FVector2D NewPosition(CanvasSlot->GetPosition().X,
-							Position.Y - CanvasSlot->GetSize().Y);
+						FVector2D NewPosition(
+							CanvasSlot->GetPosition().X,
+							Position.Y - CanvasSlot->GetSize().Y
+						);
 						CanvasSlot->SetPosition(NewPosition);
 					}
 				}
 			}
 
+
+
 			ElimMessages.Add(ElimAnnouncementWidget);
 
 			FTimerHandle ElimMsgTimer;
 			FTimerDelegate ElimMsgDelegate;
-			ElimMsgDelegate.BindUFunction(this,
-				FName("ElimAnnouncementTimerFinished"),
-				ElimAnnouncementWidget);
-
+			ElimMsgDelegate.BindUFunction(this, FName("ElimAnnouncementTimerFinished"), ElimAnnouncementWidget);
 			GetWorldTimerManager().SetTimer(
-				ElimMsgTimer, 
+				ElimMsgTimer,
 				ElimMsgDelegate,
 				ElimAnnouncementTime,
 				false

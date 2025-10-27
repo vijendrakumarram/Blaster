@@ -70,6 +70,11 @@ void ABlasterGameMode::OnMatchStateSet()
 	}
 }
 
+float ABlasterGameMode::CalculateDamage(AController* Attacker, AController* Victim, float BaseDamage)
+{
+	return BaseDamage;
+}
+
 void ABlasterGameMode::PlayerEliminated(class ABlasterCharacter* ElimmedCharacter, class ABlasterPlayerController* VictimController, ABlasterPlayerController* AttackerController)
 {
 	if (AttackerController == nullptr || AttackerController->PlayerState == nullptr) return;
@@ -89,7 +94,6 @@ void ABlasterGameMode::PlayerEliminated(class ABlasterCharacter* ElimmedCharacte
 
 		AttackerPlayerState->AddToScore(1.f);
 		BlasterGameState->UpdateTopScore(AttackerPlayerState);
-
 		if (BlasterGameState->TopScoringPlayers.Contains(AttackerPlayerState))
 		{
 			ABlasterCharacter* Leader = Cast<ABlasterCharacter>(AttackerPlayerState->GetPawn());
@@ -124,7 +128,7 @@ void ABlasterGameMode::PlayerEliminated(class ABlasterCharacter* ElimmedCharacte
 	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 	{
 		ABlasterPlayerController* BlasterPlayer = Cast<ABlasterPlayerController>(*It);
-		if (BlasterPlayer)
+		if (BlasterPlayer && AttackerPlayerState && VictimPlayerState)
 		{
 			BlasterPlayer->BroadcastElim(AttackerPlayerState, VictimPlayerState);
 		}
@@ -160,9 +164,4 @@ void ABlasterGameMode::PlayerLeftGame(ABlasterPlayerState* PlayerLeaving)
 	{
 		CharacterLeaving->Elim(true);
 	}
-}
-
-float ABlasterGameMode::CalculateDamage(AController* Attacker, AController* Victim, float BaseDamage)
-{
-	return BaseDamage;
 }

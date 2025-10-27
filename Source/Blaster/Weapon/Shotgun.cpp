@@ -27,7 +27,6 @@ void AShotgun::FireShotgun(const TArray<FVector_NetQuantize>& HitTargets)
 		// Maps hit character to number of times hit
 		TMap<ABlasterCharacter*, uint32> HitMap;
 		TMap<ABlasterCharacter*, uint32> HeadShotHitMap;
-
 		for (FVector_NetQuantize HitTarget : HitTargets)
 		{
 			FHitResult FireHit;
@@ -48,6 +47,7 @@ void AShotgun::FireShotgun(const TArray<FVector_NetQuantize>& HitTargets)
 					if (HitMap.Contains(BlasterCharacter)) HitMap[BlasterCharacter]++;
 					else HitMap.Emplace(BlasterCharacter, 1);
 				}
+
 
 				if (ImpactParticles)
 				{
@@ -70,7 +70,6 @@ void AShotgun::FireShotgun(const TArray<FVector_NetQuantize>& HitTargets)
 				}
 			}
 		}
-
 		TArray<ABlasterCharacter*> HitCharacters;
 
 		// Maps Character hit to total damage
@@ -82,18 +81,19 @@ void AShotgun::FireShotgun(const TArray<FVector_NetQuantize>& HitTargets)
 			if (HitPair.Key)
 			{
 				DamageMap.Emplace(HitPair.Key, HitPair.Value * Damage);
+
 				HitCharacters.AddUnique(HitPair.Key);
 			}
 		}
-		
+
 		// Calculate head shot damage by multiplying times hit x HeadShotDamage - store in DamageMap
 		for (auto HeadShotHitPair : HeadShotHitMap)
 		{
-			if (HeadShotHitPair.Key && InstigatorController)
+			if (HeadShotHitPair.Key)
 			{
 				if (DamageMap.Contains(HeadShotHitPair.Key)) DamageMap[HeadShotHitPair.Key] += HeadShotHitPair.Value * HeadShotDamage;
 				else DamageMap.Emplace(HeadShotHitPair.Key, HeadShotHitPair.Value * HeadShotDamage);
-				
+
 				HitCharacters.AddUnique(HeadShotHitPair.Key);
 			}
 		}
@@ -116,6 +116,7 @@ void AShotgun::FireShotgun(const TArray<FVector_NetQuantize>& HitTargets)
 				}
 			}
 		}
+
 
 		if (!HasAuthority() && bUseServerSideRewind)
 		{

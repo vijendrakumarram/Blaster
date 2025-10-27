@@ -6,7 +6,7 @@
 #include "Blaster/CaptureTheFlag/FlagZone.h"
 #include "Blaster/GameState/BlasterGameState.h"
 
-void ACaptureTheFlagGameMode::PlayerEliminated(ABlasterCharacter* ElimmedCharacter, ABlasterPlayerController* VictimController, ABlasterPlayerController* AttackerController)
+void ACaptureTheFlagGameMode::PlayerEliminated(class ABlasterCharacter* ElimmedCharacter, class ABlasterPlayerController* VictimController, ABlasterPlayerController* AttackerController)
 {
 	ABlasterGameMode::PlayerEliminated(ElimmedCharacter, VictimController, AttackerController);
 }
@@ -21,7 +21,6 @@ void ACaptureTheFlagGameMode::FlagCaptured(AFlag* Flag, AFlagZone* Zone)
 		{
 			BGameState->BlueTeamScores();
 		}
-
 		if (Zone->Team == ETeam::ET_RedTeam)
 		{
 			BGameState->RedTeamScores();

@@ -20,7 +20,7 @@ public:
 	UPROPERTY(Replicated)
 	TArray<ABlasterPlayerState*> TopScoringPlayers;
 
-	/**
+	/** 
 	* Teams
 	*/
 

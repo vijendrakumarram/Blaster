@@ -28,7 +28,6 @@ public:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
 	void HideTeamScores();
 	void InitTeamScores();
 	void SetHUDRedTeamScore(int32 RedScore);
@@ -45,7 +44,6 @@ public:
 	FHighPingDelegate HighPingDelegate;
 
 	void BroadcastElim(APlayerState* Attacker, APlayerState* Victim);
-
 protected:
 	virtual void BeginPlay() override;
 	void SetHUDTime();
@@ -94,7 +92,6 @@ protected:
 
 	FString GetInfoText(const TArray<class ABlasterPlayerState*>& Players);
 	FString GetTeamsInfoText(class ABlasterGameState* BlasterGameState);
-
 private:
 	UPROPERTY()
 	class ABlasterHUD* BlasterHUD;

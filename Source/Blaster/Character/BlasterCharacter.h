@@ -58,19 +58,17 @@ public:
 	bool bFinishedSwapping = false;
 
 	UFUNCTION(Server, Reliable)
-	void ServerLeaveGame();		
+	void ServerLeaveGame();
 
 	FOnLeftGame OnLeftGame;
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastGainedTheLead();
-	
+
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastLostTheLead();
-	
+
 	void SetTeamColor(ETeam Team);
-
-
 
 protected:
 	virtual void BeginPlay() override;
@@ -94,7 +92,6 @@ protected:
 	void GrenadeButtonPressed();
 	void DropOrDestroyWeapon(AWeapon* Weapon);
 	void DropOrDestroyWeapons();
-
 	void SetSpawnPoint();
 	void OnPlayerStateInitialized();
 
@@ -300,7 +297,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Elim)
 	UMaterialInstance* DissolveMaterialInstance;
 
-	/**
+	/** 
 	* Team colors
 	*/
 
@@ -319,9 +316,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = Elim)
 	UMaterialInstance* OriginalMaterial;
 
-
 	/**
-	* Elim bot
+	* Elim effects
 	*/
 
 	UPROPERTY(EditAnywhere)
@@ -337,8 +333,9 @@ private:
 	class ABlasterPlayerState* BlasterPlayerState;
 
 	UPROPERTY(EditAnywhere)
-	class UNiagaraSystem* CrownSystem;	
-	
+	class UNiagaraSystem* CrownSystem;
+
+	UPROPERTY()
 	class UNiagaraComponent* CrownComponent;
 
 	/**
@@ -355,7 +352,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AWeapon> DefaultWeaponClass;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	class ABlasterGameMode* BlasterGameMode;
 
 public:

@@ -427,9 +427,7 @@ void ULagCompensationComponent::ServerScoreRequest_Implementation(ABlasterCharac
 
 	if (Character && HitCharacter && Character->GetEquippedWeapon() && Confirm.bHitConfirmed)
 	{
-		const float Damage = Confirm.bHeadShot ? 
-			Character->GetEquippedWeapon()->GetHeadShotDamage() : 
-			Character->GetEquippedWeapon()->GetDamage();
+		const float Damage = Confirm.bHeadShot ? Character->GetEquippedWeapon()->GetHeadShotDamage() : Character->GetEquippedWeapon()->GetDamage();
 
 		UGameplayStatics::ApplyDamage(
 			HitCharacter,
@@ -447,9 +445,7 @@ void ULagCompensationComponent::ProjectileServerScoreRequest_Implementation(ABla
 
 	if (Character && HitCharacter && Confirm.bHitConfirmed && Character->GetEquippedWeapon())
 	{
-		const float Damage = Confirm.bHeadShot ? 
-			Character->GetEquippedWeapon()->GetHeadShotDamage() : 
-			Character->GetEquippedWeapon()->GetDamage();
+		const float Damage = Confirm.bHeadShot ? Character->GetEquippedWeapon()->GetHeadShotDamage() : Character->GetEquippedWeapon()->GetDamage();
 
 		UGameplayStatics::ApplyDamage(
 			HitCharacter,
@@ -471,7 +467,7 @@ void ULagCompensationComponent::ShotgunServerScoreRequest_Implementation(const T
 		float TotalDamage = 0.f;
 		if (Confirm.HeadShots.Contains(HitCharacter))
 		{
-			float HeadShotDamage = Confirm.HeadShots[HitCharacter] * HitCharacter->GetEquippedWeapon()->GetHeadShotDamage();			
+			float HeadShotDamage = Confirm.HeadShots[HitCharacter] * HitCharacter->GetEquippedWeapon()->GetHeadShotDamage();
 			TotalDamage += HeadShotDamage;
 		}
 		if (Confirm.BodyShots.Contains(HitCharacter))

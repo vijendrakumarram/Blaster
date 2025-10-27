@@ -134,8 +134,8 @@ protected:
 	float SphereRadius = 75.f;
 
 	UPROPERTY(EditAnywhere)
-	float Damage = 20.f;	
-	
+	float Damage = 20.f;
+
 	UPROPERTY(EditAnywhere)
 	float HeadShotDamage = 40.f;
 
@@ -191,7 +191,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	EWeaponType WeaponType;
-	
+
 	UPROPERTY(EditAnywhere)
 	ETeam Team;
 

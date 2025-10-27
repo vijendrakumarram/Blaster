@@ -37,7 +37,6 @@ void ABlasterGameState::UpdateTopScore(class ABlasterPlayerState* ScoringPlayer)
 void ABlasterGameState::RedTeamScores()
 {
 	++RedTeamScore;
-
 	ABlasterPlayerController* BPlayer = Cast<ABlasterPlayerController>(GetWorld()->GetFirstPlayerController());
 	if (BPlayer)
 	{
@@ -48,7 +47,6 @@ void ABlasterGameState::RedTeamScores()
 void ABlasterGameState::BlueTeamScores()
 {
 	++BlueTeamScore;
-
 	ABlasterPlayerController* BPlayer = Cast<ABlasterPlayerController>(GetWorld()->GetFirstPlayerController());
 	if (BPlayer)
 	{
