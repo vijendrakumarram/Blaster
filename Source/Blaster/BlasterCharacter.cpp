@@ -52,24 +52,14 @@ ABlasterCharacter::ABlasterCharacter()
 
 void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
-		
-		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ABlasterCharacter::Move);
-		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &ABlasterCharacter::Look);
+	PlayerInputComponent->BindAction("Jump",IE_Pressed,this,&ACharacter::Jump);
 
-		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ABlasterCharacter::Look);
-	}
-	else
-	{
-		UE_LOG(LogBlaster, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
-	}
+	PlayerInputComponent->BindAxis("MoveForward",this,&ABlasterCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight",this,&ABlasterCharacter::MoveRight);
+	PlayerInputComponent->BindAxis("Turn",this,&ABlasterCharacter::Turn);
+	PlayerInputComponent->BindAxis("LoopUp",this,&ABlasterCharacter::LookUp);
 }
 
 void ABlasterCharacter::Move(const FInputActionValue& Value)
@@ -80,6 +70,45 @@ void ABlasterCharacter::Move(const FInputActionValue& Value)
 	// route the input
 	DoMove(MovementVector.X, MovementVector.Y);
 }
+void ABlasterCharacter::MoveForward(float Value)
+{
+	if (Controller != nullptr && Value != 0.f)
+	{
+		const FRotator YawRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		AddMovementInput(Direction, Value);		
+	}
+}
+
+
+void ABlasterCharacter::MoveRight(float Value)
+{
+	if (Controller != nullptr && Value != 0.f)
+	{
+		const FRotator YawRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		AddMovementInput(Direction, Value);
+	}
+}
+
+
+void ABlasterCharacter::Turn(float Value)
+{
+	AddControllerYawInput(Value);
+}
+
+
+
+void ABlasterCharacter::LookUp(float Value)
+{
+	AddControllerPitchInput(Value);
+}
+
+
+
+
+
+
 
 void ABlasterCharacter::Look(const FInputActionValue& Value)
 {

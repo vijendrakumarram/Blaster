@@ -64,6 +64,12 @@ protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
+
+	void MoveForward(float Value);
+	void MoveRight(float Value);
+	void Turn(float Value);
+	void LookUp(float Value);
+
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 
